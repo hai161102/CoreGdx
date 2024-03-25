@@ -16,7 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -297,6 +299,30 @@ public class Node implements INode, IJson {
         if (this.parent == null) return;
         this.destroy();
         this.parent.removeChild(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends IComponent> T getComponent(Class<T> tClass) {
+        Optional<IComponent> optional = this.components.stream().filter(c -> c.getClass().equals(tClass)).findFirst();
+        return (T) optional.orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends IComponent> List<T> getComponentsInChildren(Class<T> tClass) {
+        List<T> list = new ArrayList<>();
+        List<Node> allChild = new ArrayList<>();
+        this.traverse(allChild);
+        for (Node node : allChild) {
+            list.addAll(
+                    (Collection<? extends T>) node.getComponents()
+                            .stream()
+                            .filter(c -> c.getClass().equals(tClass)).collect(Collectors.toList())
+            );
+        }
+        return list;
+    }
+    public List<IComponent> getComponents() {
+        return this.components;
     }
 
     private void drawShape(

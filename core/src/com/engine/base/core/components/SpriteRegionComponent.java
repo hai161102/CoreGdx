@@ -2,12 +2,12 @@ package com.engine.base.core.components;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.engine.base.core.interfaces.IComponent;
+import com.engine.base.core.interfaces.Component;
 import com.engine.base.core.maths.Quat;
 import com.engine.base.core.maths.Vec3;
 import com.engine.base.core.Node;
 
-public class SpriteRegionComponent extends TextureRegion implements IComponent {
+public class SpriteRegionComponent extends TextureRegion implements Component {
     private Node node;
     public SpriteRegionComponent() {
     }
@@ -107,7 +107,7 @@ public class SpriteRegionComponent extends TextureRegion implements IComponent {
     }
 
     @Override
-    public IComponent setNode(Node node) {
+    public Component setNode(Node node) {
         this.node = node;
         return this;
     }

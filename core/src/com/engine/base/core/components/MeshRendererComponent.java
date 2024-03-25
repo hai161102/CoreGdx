@@ -4,11 +4,11 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.utils.Array;
 import com.engine.base.core.Node;
-import com.engine.base.core.interfaces.IComponent;
+import com.engine.base.core.interfaces.Component;
 import com.engine.base.core.maths.Mat4;
 import com.engine.base.core.maths.Vec3;
 
-public class MeshRendererComponent extends ModelInstance implements IComponent {
+public class MeshRendererComponent extends ModelInstance implements Component {
     private Node node;
     public MeshRendererComponent(Model model) {
         super(model);
@@ -115,7 +115,7 @@ public class MeshRendererComponent extends ModelInstance implements IComponent {
     }
 
     @Override
-    public IComponent setNode(Node node) {
+    public Component setNode(Node node) {
         this.node = node;
         return this;
     }

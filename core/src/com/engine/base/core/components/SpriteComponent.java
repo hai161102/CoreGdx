@@ -4,13 +4,13 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
-import com.engine.base.core.interfaces.IComponent;
+import com.engine.base.core.interfaces.Component;
 import com.engine.base.core.maths.Quat;
 import com.engine.base.core.maths.Vec2;
 import com.engine.base.core.maths.Vec3;
 import com.engine.base.core.Node;
 
-public class SpriteComponent extends Texture implements IComponent {
+public class SpriteComponent extends Texture implements Component {
     private Node node;
     public SpriteComponent(String internalPath) {
         super(internalPath);
@@ -119,7 +119,7 @@ public class SpriteComponent extends Texture implements IComponent {
     }
 
     @Override
-    public IComponent setNode(Node node) {
+    public Component setNode(Node node) {
         this.node = node;
         return this;
     }

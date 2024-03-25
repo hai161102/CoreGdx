@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.JsonValue;
-import com.engine.base.core.interfaces.IComponent;
+import com.engine.base.core.interfaces.Component;
 import com.engine.base.core.interfaces.IJson;
 import com.engine.base.core.interfaces.INode;
 import com.engine.base.core.maths.*;
@@ -42,7 +42,7 @@ public class Node implements INode, IJson {
     public boolean enableShape = false;
     protected Node parent;
     private final Array<Node> children = new Array<>();
-    private final List<IComponent> components = new ArrayList<>();
+    private final List<Component> components = new ArrayList<>();
     private Environment environment;
     public Mat4 calculateLocalTransform() {
         if (!this.isAnimated) {
@@ -79,7 +79,7 @@ public class Node implements INode, IJson {
         parent.addChild(this);
     }
 
-    public IComponent addComponent(IComponent component) {
+    public Component addComponent(Component component) {
         this.components.add(component);
         return component.setNode(this);
     }
@@ -265,7 +265,7 @@ public class Node implements INode, IJson {
 
     @Override
     public void start() {
-        for (IComponent component : this.components) {
+        for (Component component : this.components) {
             component.start();
         }
         for (Node child : this.children) {
@@ -276,7 +276,7 @@ public class Node implements INode, IJson {
     @Override
     public void update(float delta) {
         this.calculateTransforms(true);
-        for (IComponent component : this.components) {
+        for (Component component : this.components) {
             component.update(delta);
         }
         for (Node child : this.children) {
@@ -286,7 +286,7 @@ public class Node implements INode, IJson {
 
     @Override
     public void destroy() {
-        for (IComponent component : this.components) {
+        for (Component component : this.components) {
             component.destroy();
         }
         for (Node child : this.children) {
@@ -302,13 +302,13 @@ public class Node implements INode, IJson {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IComponent> T getComponent(Class<T> tClass) {
-        Optional<IComponent> optional = this.components.stream().filter(c -> c.getClass().equals(tClass)).findFirst();
+    public <T extends Component> T getComponent(Class<T> tClass) {
+        Optional<Component> optional = this.components.stream().filter(c -> c.getClass().equals(tClass)).findFirst();
         return (T) optional.orElse(null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IComponent> List<T> getComponentsInChildren(Class<T> tClass) {
+    public <T extends Component> List<T> getComponentsInChildren(Class<T> tClass) {
         List<T> list = new ArrayList<>();
         List<Node> allChild = new ArrayList<>();
         this.traverse(allChild);
@@ -321,7 +321,7 @@ public class Node implements INode, IJson {
         }
         return list;
     }
-    public List<IComponent> getComponents() {
+    public List<Component> getComponents() {
         return this.components;
     }
 

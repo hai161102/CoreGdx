@@ -2,10 +2,12 @@ package com.engine.base.core.components;
 
 import com.badlogic.gdx.Gdx;
 import com.engine.base.core.Node;
+import com.engine.base.core.interfaces.Component;
 import com.engine.base.core.maths.Rect;
 
-public class Widget extends Component {
+public class Widget implements Component {
 
+    private Node node;
     public final Constrain left = new Constrain(Constrain.ConstrainType.LEFT);
     public final Constrain top = new Constrain(Constrain.ConstrainType.TOP);
     public final Constrain right = new Constrain(Constrain.ConstrainType.RIGHT);
@@ -35,49 +37,49 @@ public class Widget extends Component {
     }
 
     public void apply() {
-//        if (this.node == null || this.node.getParent() == null) return;
-//        Rect parentRect = this.node.getParent().getRect2D(true);
-//        Gdx.app.log("local rect", parentRect.toString());
-//        if (this.left.active && this.right.active) {
-//            this.node.size.x = parentRect.width - (this.left.margin + this.right.margin);
-//        }
-//        else if (this.left.active || this.right.active){
-//            if (this.left.active) {
-//                this.node.position.x = parentRect.left
-//                        + this.left.margin + this.node.size.x * this.node.anchor.x;
-//            }
-//            else {
-//                this.node.position.x = parentRect.right
-//                        - (this.right.margin + this.node.size.x * this.node.anchor.x);
-//            }
-//        }
-//        if (this.top.active && this.bottom.active) {
-//            this.node.size.y = parentRect.height - (this.top.margin + this.bottom.margin);
-//        }
-//        else if (this.top.active || this.bottom.active) {
-//            if (this.top.active) {
-//                this.node.position.y = parentRect.top
-//                        - (this.top.margin + this.node.size.y * this.node.anchor.y);
-//            }
-//            else  {
-//                this.node.position.y = parentRect.bottom
-//                        + (this.bottom.margin + this.node.size.y * this.node.anchor.y);
-//            }
-//        }
+        if (this.node == null || this.node.getParent() == null) return;
+        Rect parentRect = this.node.getParent().getRect2D(true);
+        Gdx.app.log("local rect", parentRect.toString());
+        if (this.left.active && this.right.active) {
+            this.node.size.x = parentRect.width - (this.left.margin + this.right.margin);
+        }
+        else if (this.left.active || this.right.active){
+            if (this.left.active) {
+                this.node.position.x = parentRect.left
+                        + this.left.margin + this.node.size.x * this.node.anchor.x;
+            }
+            else {
+                this.node.position.x = parentRect.right
+                        - (this.right.margin + this.node.size.x * this.node.anchor.x);
+            }
+        }
+        if (this.top.active && this.bottom.active) {
+            this.node.size.y = parentRect.height - (this.top.margin + this.bottom.margin);
+        }
+        else if (this.top.active || this.bottom.active) {
+            if (this.top.active) {
+                this.node.position.y = parentRect.top
+                        - (this.top.margin + this.node.size.y * this.node.anchor.y);
+            }
+            else  {
+                this.node.position.y = parentRect.bottom
+                        + (this.bottom.margin + this.node.size.y * this.node.anchor.y);
+            }
+        }
 
     }
     @Override
-    public Widget setNode(Node node) {
-        super.setNode(node);
-//        if (this.node.parent == null) return this;
-//        if (this.top.active) this.top.margin = Math.abs(
-//                this.node.parent.getRect2D().top - this.node.getRect2D().top);
-//        if (this.left.active) this.left.margin = Math.abs(
-//                this.node.parent.getRect2D().left - this.node.getRect2D().left);
-//        if (this.bottom.active) this.bottom.margin = Math.abs(
-//                this.node.parent.getRect2D().bottom - this.node.getRect2D().bottom);
-//        if (this.right.active) this.right.margin = Math.abs(
-//                this.node.parent.getRect2D().right - this.node.getRect2D().right);
+    public Component setNode(Node node) {
+        this.node = node;
+        if (this.node.getParent() == null) return this;
+        if (this.top.active) this.top.margin = Math.abs(
+                this.node.getParent().getRect2D().top - this.node.getRect2D().top);
+        if (this.left.active) this.left.margin = Math.abs(
+                this.node.getParent().getRect2D().left - this.node.getRect2D().left);
+        if (this.bottom.active) this.bottom.margin = Math.abs(
+                this.node.getParent().getRect2D().bottom - this.node.getRect2D().bottom);
+        if (this.right.active) this.right.margin = Math.abs(
+                this.node.getParent().getRect2D().right - this.node.getRect2D().right);
         return this;
     }
 

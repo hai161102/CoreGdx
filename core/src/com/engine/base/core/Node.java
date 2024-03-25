@@ -11,9 +11,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.engine.base.core.interfaces.IComponent;
 import com.engine.base.core.interfaces.IJson;
 import com.engine.base.core.interfaces.INode;
-import com.engine.base.core.maths.Mat4;
-import com.engine.base.core.maths.Quat;
-import com.engine.base.core.maths.Vec3;
+import com.engine.base.core.maths.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -412,7 +410,43 @@ public class Node implements INode, IJson {
     public void rotate(Vec3 axis, float rad) {
         this.rotation.setFromAxisRad(axis, this.rotation.getAxisAngleRad(axis) + rad);
     }
+    public Rect getRect2D(boolean local) {
+        this.calculateTransforms(true);
+        Vec3 pos = new Vec3();
+        if (local) pos.set(this.localTransform.getTranslation(new Vec3()));
+        else pos.set(this.globalTransform.getTranslation(new Vec3()));
+        Vec2 realSize = new Vec2(
+                this.size.x * this.scale.x,
+                this.size.y * this.scale.y
+        );
+        return new Rect(
+                pos.x - realSize.x * this.anchor.x,
+                pos.y - realSize.y * this.anchor.y,
+                realSize.x,
+                realSize.y
+        ).update();
+    }
+    public Rect getRect2D() {
+        return getRect2D(false);
+    }
+    public boolean isFlipX() {
+        return flipX;
+    }
 
+    public void setFlipX(boolean flipX) {
+        this.flipX = flipX;
+    }
+
+    public boolean isFlipY() {
+        return flipY;
+    }
+
+    public void setFlipY(boolean flipY) {
+        this.flipY = flipY;
+    }
+    public boolean isIntersect2D(Vec2 point) {
+        return getRect2D().contains(point.x, point.y);
+    }
     private static class KeyJson {
         public static final String POSITION = "position";
         public static final String ROTATION = "rotation";

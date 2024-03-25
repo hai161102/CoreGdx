@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class Node implements INode, IJson {
     public static final SpriteBatch print2d = new SpriteBatch();
@@ -159,8 +161,9 @@ public class Node implements INode, IJson {
         }
     }
 
-    public Iterable<Node> getChildren() {
-        return this.children;
+    public List<Node> getChildren() {
+        return StreamSupport.stream(this.children.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     public Node getParent() {

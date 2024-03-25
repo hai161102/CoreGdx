@@ -382,21 +382,27 @@ public class Node implements INode, IJson {
         this.calculateTransforms(true);
     }
     public void setWorldPosition(Vec3 worldPosition) {
+        this.calculateTransforms(true);
         Vec3 minus = worldPosition.sub(this.globalTransform.getTranslation(new Vec3()));
         Vec3 nextPos = this.position.cpy().add(minus);
         this.setPosition(nextPos);
     }
 
+    public Vec3 getWorldPosition() {
+        this.calculateTransforms(true);
+        return this.globalTransform.getTranslation(new Vec3());
+    }
     public void translate(float x, float y, float z) {
         this.translate(new Vec3(x, y, z));
     }
 
     public void scale(float x, float y, float z) {
         this.scale.set(x, y, z);
+        this.calculateTransforms(true);
     }
 
     public void scale(float x, float y) {
-        this.scale.set(x, y, this.scale.z);
+        this.scale(x, y, this.scale.z);
     }
 
     public void scale(@NotNull Vec3 scale) {
@@ -405,11 +411,22 @@ public class Node implements INode, IJson {
 
     public void rotateTo(Vec3 axis, float rad) {
         this.rotation.set(axis, (float) Math.toDegrees(rad));
+        this.calculateTransforms(true);
     }
 
     public void rotate(Vec3 axis, float rad) {
         this.rotation.setFromAxisRad(axis, this.rotation.getAxisAngleRad(axis) + rad);
+        this.calculateTransforms(true);
     }
+
+    public Mat4 getLocalTransform() {
+        return this.calculateLocalTransform();
+    }
+
+    public Mat4 getGlobalTransform() {
+        return this.calculateWorldTransform();
+    }
+
     public Rect getRect2D(boolean local) {
         this.calculateTransforms(true);
         Vec3 pos = new Vec3();

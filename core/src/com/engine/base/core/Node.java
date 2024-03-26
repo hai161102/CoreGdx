@@ -476,13 +476,13 @@ public class Node implements INode, IJson {
 
     @Override
     public Mat4 getLocalTransform() {
-        this.calculateTransforms(true);
+        this.calculateLocalTransform();
         return this.localTransform;
     }
 
     @Override
     public Mat4 getGlobalTransform() {
-        this.calculateTransforms(true);
+        this.calculateWorldTransform();
         return this.globalTransform;
     }
 

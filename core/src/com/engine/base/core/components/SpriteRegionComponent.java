@@ -68,19 +68,19 @@ public class SpriteRegionComponent extends TextureRegion implements Component {
     @Override
     public void update(float delta) {
         if (this.node == null) return;
-        Vec3 pos = this.node.globalTransform.getTranslation(new Vec3());
+        Vec3 pos = this.node.getGlobalTransform().getTranslation(new Vec3());
         pos.z = 0;
-        Vec3 scale = this.node.globalTransform.getScale(new Vec3());
-        Quat rotation = this.node.globalTransform.getRotation(new Quat());
+        Vec3 scale = this.node.getGlobalTransform().getScale(new Vec3());
+        Quat rotation = this.node.getGlobalTransform().getRotation(new Quat());
         float angle = rotation.getAxisAngle(Vec3.Z);
         Node.print2d.setColor(
                 Node.print2d.getColor().r,
                 Node.print2d.getColor().g,
                 Node.print2d.getColor().b,
-                this.node.opacity
+                this.node.getOpacity()
         );
-        Vec3 size = this.node.size;
-        Vec3 anchor = this.node.anchor;
+        Vec3 size = this.node.getSize();
+        Vec3 anchor = this.node.getAnchor();
         Node.print2d.draw(
                 this,
                 pos.x - size.x * anchor.x,

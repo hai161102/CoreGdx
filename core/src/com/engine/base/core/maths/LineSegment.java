@@ -1,9 +1,9 @@
 package com.engine.base.core.maths;
 
 public class LineSegment {
-    Vec2 start;
-    Vec2 end;
-    String name;
+    public Vec2 start;
+    public Vec2 end;
+    public String name;
 
     /**
      * @param a the first point of this line

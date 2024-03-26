@@ -23,45 +23,45 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@SuppressWarnings("unchecked")
 public class Node implements INode, IJson {
     public static final SpriteBatch print2d = new SpriteBatch();
     public static final ModelBatch print3d = new ModelBatch();
     public static final ShapeRenderer shapeRenderer = new ShapeRenderer();
-    public String id;
-    public boolean inheritTransform = true;
-    public boolean isAnimated;
-    public final Vec3 position = new Vec3();
-    public final Quat rotation = new Quat(0.0F, 0.0F, 0.0F, 1.0F);
-    public final Vec3 scale = new Vec3(1.0F, 1.0F, 1.0F);
-    public final Vec3 size = new Vec3(1, 1, 1);
-    public boolean flipX = false;
-    public boolean flipY = false;
-    public final Vec3 anchor = new Vec3(0.5f, 0.5f, 0.5f);
-    public float opacity = 1;
-    public final Mat4 localTransform = new Mat4();
-    public final Mat4 globalTransform = new Mat4();
-    public boolean enableShape = false;
+    protected String id;
+    protected boolean inheritTransform = true;
+    protected boolean isAnimated;
+    protected final Vec3 position = new Vec3();
+    protected final Quat rotation = new Quat(0.0F, 0.0F, 0.0F, 1.0F);
+    protected final Vec3 scale = new Vec3(1.0F, 1.0F, 1.0F);
+    protected final Vec3 size = new Vec3(1, 1, 1);
+    protected boolean flipX = false;
+    protected boolean flipY = false;
+    protected final Vec3 anchor = new Vec3(0.5f, 0.5f, 0.5f);
+    protected float opacity = 1;
+    protected final Mat4 localTransform = new Mat4();
+    protected final Mat4 globalTransform = new Mat4();
+    protected boolean enableShape = false;
     protected Node parent;
-    private final Array<Node> children = new Array<>();
-    private final List<Component> components = new ArrayList<>();
-    private Environment environment;
-    public Mat4 calculateLocalTransform() {
-        if (!this.isAnimated) {
-            this.localTransform.set(this.position, this.rotation, this.scale);
-        }
-
-        return this.localTransform;
-    }
-
-    public Mat4 calculateWorldTransform() {
-        if (this.inheritTransform && this.parent != null) {
-            this.globalTransform.set(this.parent.globalTransform).mul(this.localTransform);
-        } else {
-            this.globalTransform.set(this.localTransform);
-        }
-
-        return this.globalTransform;
-    }
+    protected final Array<Node> children = new Array<>();
+    protected final List<Component> components = new ArrayList<>();
+    protected Environment environment;
+//    public Mat4 calculateLocalTransform() {
+//        if (!this.isAnimated) {
+//            this.localTransform.set(this.position, this.rotation, this.scale);
+//        }
+//        return this.localTransform;
+//    }
+//
+//    public Mat4 calculateWorldTransform() {
+//        if (this.inheritTransform && this.parent != null) {
+//            this.globalTransform.set(this.parent.globalTransform).mul(this.localTransform);
+//        } else {
+//            this.globalTransform.set(this.localTransform);
+//        }
+//
+//        return this.globalTransform;
+//    }
 
     public void calculateTransforms(boolean recursive) {
         this.calculateLocalTransform();
@@ -74,7 +74,7 @@ public class Node implements INode, IJson {
         }
 
     }
-    
+
 
     public <T extends Node> void attachTo(T parent) {
         parent.addChild(this);
@@ -84,12 +84,12 @@ public class Node implements INode, IJson {
         this.components.add(component);
         return component.setNode(this);
     }
+
     public void detach() {
         if (this.parent != null) {
             this.parent.removeChild(this);
             this.parent = null;
         }
-
     }
 
     public boolean hasChildren() {
@@ -118,7 +118,7 @@ public class Node implements INode, IJson {
 
     public <T extends Node> int insertChild(int index, T child) {
         Node p;
-        for(p = this; p != null; p = p.getParent()) {
+        for (p = this; p != null; p = p.getParent()) {
             if (p == child) {
                 throw new GdxRuntimeException("Cannot add a parent as a child");
             }
@@ -136,7 +136,7 @@ public class Node implements INode, IJson {
             }
 
             child.parent = this;
-            child.setEnvironment(this .getEnvironment());
+            child.setEnvironment(this.getEnvironment());
             return index;
         }
     }
@@ -154,6 +154,7 @@ public class Node implements INode, IJson {
 
         return index;
     }
+
 
     public <T extends Node> boolean removeChild(T child) {
         if (!this.children.removeValue(child, true)) {
@@ -177,11 +178,12 @@ public class Node implements INode, IJson {
         return this.parent != null;
     }
 
-    public Node copy() {
-        return (new Node()).set(this);
+    @SuppressWarnings("unchecked")
+    public <T extends Node> T copy() {
+        return (T) (new Node()).set(this);
     }
 
-    protected Node set(Node other) {
+    protected <T extends Node> T set(T other) {
         this.detach();
         this.id = other.id;
         this.isAnimated = other.isAnimated;
@@ -189,16 +191,22 @@ public class Node implements INode, IJson {
         this.position.set(other.position);
         this.rotation.set(other.rotation);
         this.scale.set(other.scale);
+        this.size.set(other.size);
+        this.anchor.set(other.anchor);
+        this.opacity = other.opacity;
+        this.flipX = other.flipX;
+        this.flipY = other.flipY;
+        this.enableShape = other.enableShape;
         this.localTransform.set(other.localTransform);
         this.globalTransform.set(other.globalTransform);
-
+        this.environment = other.getEnvironment();
+        this.components.clear();
+        this.components.addAll(other.getComponents());
         this.children.clear();
-
         for (Node child : other.getChildren()) {
             this.addChild(child.copy());
         }
-
-        return this;
+        return (T) this;
     }
 
     public static Node getNode(Array<Node> nodes, String id, boolean recursive, boolean ignoreCase) {
@@ -206,13 +214,13 @@ public class Node implements INode, IJson {
         Node node;
         int i;
         if (ignoreCase) {
-            for(i = 0; i < n; ++i) {
+            for (i = 0; i < n; ++i) {
                 if ((node = nodes.get(i)).id.equalsIgnoreCase(id)) {
                     return node;
                 }
             }
         } else {
-            for(i = 0; i < n; ++i) {
+            for (i = 0; i < n; ++i) {
                 if ((node = nodes.get(i)).id.equals(id)) {
                     return node;
                 }
@@ -220,7 +228,7 @@ public class Node implements INode, IJson {
         }
 
         if (recursive) {
-            for(i = 0; i < n; ++i) {
+            for (i = 0; i < n; ++i) {
                 if ((node = getNode(nodes.get(i).children, id, true, ignoreCase)) != null) {
                     return node;
                 }
@@ -259,9 +267,9 @@ public class Node implements INode, IJson {
     }
 
     @Override
-    public INode apply() {
+    public <T extends INode> T apply() {
         this.start();
-        return this;
+        return (T) this;
     }
 
     @Override
@@ -322,6 +330,7 @@ public class Node implements INode, IJson {
         }
         return list;
     }
+
     public List<Component> getComponents() {
         return this.components;
     }
@@ -371,8 +380,6 @@ public class Node implements INode, IJson {
         stringBuilder.append("{");
         stringBuilder.append("\"id\":")
                 .append("\"").append(this.id).append("\"").append(",");
-//        stringBuilder.append("\"texture\":\"").append(this.texturePath).append("\"").append(",");
-//        stringBuilder.append("\"model\":\"").append(this.modelPath).append("\"").append(",");
         stringBuilder.append(getKeyJson(KeyJson.POSITION))
                 .append(this.position).append(",");
         stringBuilder.append(getKeyJson(KeyJson.ROTATION))
@@ -400,17 +407,18 @@ public class Node implements INode, IJson {
         stringBuilder.append("]").append("}");
         return stringBuilder.toString();
     }
+
     private String getKeyJson(String key) {
         return "\"" + key + "\":";
     }
 
-    public void translate(Vec3 vec3) {
-        this.position.add(vec3);
-    }
+    @Override
     public void setPosition(Vec3 position) {
         this.position.set(position);
         this.calculateTransforms(true);
     }
+
+    @Override
     public void setWorldPosition(Vec3 worldPosition) {
         this.calculateTransforms(true);
         Mat4 invModelTransform = new Mat4().set(this.getParent().getGlobalTransform()).inv();
@@ -421,45 +429,71 @@ public class Node implements INode, IJson {
         this.calculateTransforms(true);
     }
 
+    @Override
     public Vec3 getWorldPosition() {
         this.calculateTransforms(true);
         return this.globalTransform.getTranslation(new Vec3());
     }
+
+    @Override
+    public void translate(Vec3 vec3) {
+        this.position.add(vec3);
+        this.calculateTransforms(true);
+    }
+
+    @Override
     public void translate(float x, float y, float z) {
         this.translate(new Vec3(x, y, z));
     }
 
+    @Override
     public void scale(float x, float y, float z) {
         this.scale.set(x, y, z);
         this.calculateTransforms(true);
     }
 
+    @Override
     public void scale(float x, float y) {
         this.scale(x, y, this.scale.z);
     }
 
+    @Override
     public void scale(@NotNull Vec3 scale) {
         this.scale(scale.x, scale.y, scale.z);
     }
 
+    @Override
     public void rotateTo(Vec3 axis, float rad) {
         this.rotation.set(axis, (float) Math.toDegrees(rad));
         this.calculateTransforms(true);
     }
 
+    @Override
     public void rotate(Vec3 axis, float rad) {
         this.rotation.setFromAxisRad(axis, this.rotation.getAxisAngleRad(axis) + rad);
         this.calculateTransforms(true);
     }
 
+    @Override
     public Mat4 getLocalTransform() {
         this.calculateTransforms(true);
         return this.localTransform;
     }
 
+    @Override
     public Mat4 getGlobalTransform() {
         this.calculateTransforms(true);
         return this.globalTransform;
+    }
+
+    @Override
+    public Mat4 setLocalTransform(Mat4 mat4) {
+        return this.localTransform.set(mat4);
+    }
+
+    @Override
+    public Mat4 setGlobalTransform(Mat4 mat4) {
+        return this.globalTransform.set(mat4);
     }
 
     public Rect getRect2D(boolean local) {
@@ -478,27 +512,132 @@ public class Node implements INode, IJson {
                 realSize.y
         ).update();
     }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean isInheritTransform() {
+        return inheritTransform;
+    }
+
+    @Override
+    public boolean isAnimated() {
+        return isAnimated;
+    }
+
+    @Override
+    public Vec3 getPosition() {
+        return position;
+    }
+
+    @Override
+    public Quat getRotation() {
+        return rotation;
+    }
+
+    @Override
+    public Vec3 getScale() {
+        return scale;
+    }
+
+    @Override
+    public Vec3 getSize() {
+        return size;
+    }
+
+    @Override
+    public Vec3 getAnchor() {
+        return anchor;
+    }
+
+    @Override
+    public float getOpacity() {
+        return opacity;
+    }
+
+    @Override
+    public boolean isEnableShape() {
+        return enableShape;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public void setInheritTransform(boolean inheritTransform) {
+        this.inheritTransform = inheritTransform;
+    }
+
+    @Override
+    public void setAnimated(boolean animated) {
+        isAnimated = animated;
+    }
+
+    @Override
+    public void setOpacity(float opacity) {
+        this.opacity = opacity;
+    }
+
+    @Override
+    public void setEnableShape(boolean enableShape) {
+        this.enableShape = enableShape;
+    }
+
+    @Override
+    public void setRotation(Quat rotation) {
+        this.rotation.set(rotation);
+        this.calculateTransforms(true);
+    }
+
+    @Override
+    public void setScale(Vec3 scale) {
+        this.scale.set(scale);
+        this.calculateTransforms(true);
+    }
+
+    @Override
+    public void setSize(Vec3 size) {
+        this.size.set(size);
+    }
+
+    @Override
+    public void setAnchor(Vec3 anchor) {
+        this.anchor.set(anchor);
+    }
+
     public Rect getRect2D() {
         return getRect2D(false);
     }
+
+    @Override
     public boolean isFlipX() {
         return flipX;
     }
 
+    @Override
     public void setFlipX(boolean flipX) {
         this.flipX = flipX;
     }
 
+    @Override
     public boolean isFlipY() {
         return flipY;
     }
 
+    @Override
     public void setFlipY(boolean flipY) {
         this.flipY = flipY;
     }
+
     public boolean isIntersect2D(Vec2 point) {
         return getRect2D().contains(point.x, point.y);
     }
+
     private static class KeyJson {
         public static final String POSITION = "position";
         public static final String ROTATION = "rotation";

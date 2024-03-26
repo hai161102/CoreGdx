@@ -16,7 +16,6 @@ public class Game implements ApplicationListener {
 
     @Override
     public void create() {
-        Gdx.files.local("data/uuids/uuid.txt").writeString("", false);
     }
 
     @Override

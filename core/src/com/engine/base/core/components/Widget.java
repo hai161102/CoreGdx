@@ -41,29 +41,29 @@ public class Widget implements Component {
         Rect parentRect = this.node.getParent().getRect2D(true);
         Gdx.app.log("local rect", parentRect.toString());
         if (this.left.active && this.right.active) {
-            this.node.size.x = parentRect.width - (this.left.margin + this.right.margin);
+            this.node.getSize().x = parentRect.width - (this.left.margin + this.right.margin);
         }
         else if (this.left.active || this.right.active){
             if (this.left.active) {
-                this.node.position.x = parentRect.left
-                        + this.left.margin + this.node.size.x * this.node.anchor.x;
+                this.node.getPosition().x = parentRect.left
+                        + this.left.margin + this.node.getSize().x * this.node.getAnchor().x;
             }
             else {
-                this.node.position.x = parentRect.right
-                        - (this.right.margin + this.node.size.x * this.node.anchor.x);
+                this.node.getPosition().x = parentRect.right
+                        - (this.right.margin + this.node.getSize().x * this.node.getAnchor().x);
             }
         }
         if (this.top.active && this.bottom.active) {
-            this.node.size.y = parentRect.height - (this.top.margin + this.bottom.margin);
+            this.node.getSize().y = parentRect.height - (this.top.margin + this.bottom.margin);
         }
         else if (this.top.active || this.bottom.active) {
             if (this.top.active) {
-                this.node.position.y = parentRect.top
-                        - (this.top.margin + this.node.size.y * this.node.anchor.y);
+                this.node.getPosition().y = parentRect.top
+                        - (this.top.margin + this.node.getSize().y * this.node.getAnchor().y);
             }
             else  {
-                this.node.position.y = parentRect.bottom
-                        + (this.bottom.margin + this.node.size.y * this.node.anchor.y);
+                this.node.getPosition().y = parentRect.bottom
+                        + (this.bottom.margin + this.node.getSize().y * this.node.getAnchor().y);
             }
         }
 

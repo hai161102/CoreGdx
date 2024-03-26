@@ -412,9 +412,10 @@ public class Node implements INode, IJson {
     }
     public void setWorldPosition(Vec3 worldPosition) {
         this.calculateTransforms(true);
-        Vec3 minus = worldPosition.sub(this.globalTransform.getTranslation(new Vec3()));
-        Vec3 nextPos = this.position.cpy().add(minus);
-        this.setPosition(nextPos);
+        Mat4 worldTransform = this.globalTransform.cpy();
+        worldTransform.setTranslation(worldPosition);
+        Mat4 local = worldTransform.mul(this.globalTransform.cpy().inv());
+        this.setPosition(local.getTranslation(new Vec3()));
     }
 
     public Vec3 getWorldPosition() {

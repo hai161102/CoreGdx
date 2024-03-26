@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.JsonValue;
@@ -412,10 +413,10 @@ public class Node implements INode, IJson {
     }
     public void setWorldPosition(Vec3 worldPosition) {
         this.calculateTransforms(true);
-        Mat4 worldTransform = this.globalTransform.cpy();
-        worldTransform.setTranslation(worldPosition);
-        Mat4 local = worldTransform.mul(this.globalTransform.cpy().inv());
-        this.setPosition(local.getTranslation(new Vec3()));
+        Mat4 invModelTransform = new Mat4().set(this.getParent().getGlobalTransform()).inv();
+        Mat4 nodeTransform = new Mat4().set(invModelTransform).mul(this.getGlobalTransform());
+        nodeTransform.getTranslation(this.position);
+        this.calculateTransforms(true);
     }
 
     public Vec3 getWorldPosition() {
@@ -450,11 +451,13 @@ public class Node implements INode, IJson {
     }
 
     public Mat4 getLocalTransform() {
-        return this.calculateLocalTransform();
+        this.calculateTransforms(true);
+        return this.localTransform;
     }
 
     public Mat4 getGlobalTransform() {
-        return this.calculateWorldTransform();
+        this.calculateTransforms(true);
+        return this.globalTransform;
     }
 
     public Rect getRect2D(boolean local) {

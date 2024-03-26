@@ -414,7 +414,9 @@ public class Node implements INode, IJson {
     public void setWorldPosition(Vec3 worldPosition) {
         this.calculateTransforms(true);
         Mat4 invModelTransform = new Mat4().set(this.getParent().getGlobalTransform()).inv();
-        Mat4 nodeTransform = new Mat4().set(invModelTransform).mul(this.getGlobalTransform());
+        Mat4 nodeTransform = new Mat4()
+                .set(invModelTransform)
+                .mul(this.getGlobalTransform().cpy().setToTranslation(worldPosition));
         nodeTransform.getTranslation(this.position);
         this.calculateTransforms(true);
     }

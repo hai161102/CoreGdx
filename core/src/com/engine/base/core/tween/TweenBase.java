@@ -46,10 +46,11 @@ public abstract class TweenBase<T> implements Tween<T> {
             }
         }
         this.playEnd();
+        if (!this.isPlaying) return;
         Gdx.app.postRunnable(() -> {
             if (this.onCompleteListener != null) {this.onCompleteListener.onComplete(this._target);}
-            this.isPlaying = false;
         });
+        this.isPlaying = false;
         this.thread.interrupt();
     };
 

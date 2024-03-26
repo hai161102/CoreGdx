@@ -20,11 +20,11 @@ public abstract class TweenBase<T> implements Tween<T> {
         while (!this.stack.empty()) {
             playStack.push(this.stack.pop());
         }
-        while (!playStack.empty()) {
+        while (!playStack.empty() && this.isPlaying) {
             TweenData<T> data = playStack.pop();
             float delta = 0f;
             this.logicStart(data);
-            while (delta <= data.getDuration()) {
+            while (delta <= data.getDuration() && this.isPlaying) {
                 float percent = deltaTime / data.getDuration();
                 this.logicUpdate(data, TweenBase.deltaTime, percent);
                 delta += TweenBase.deltaTime;

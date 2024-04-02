@@ -137,6 +137,7 @@ public class Node implements INode, IJson {
 
             child.parent = this;
             child.setEnvironment(this.getEnvironment());
+            child.start();
             return index;
         }
     }
@@ -158,9 +159,11 @@ public class Node implements INode, IJson {
 
     public <T extends Node> boolean removeChild(T child) {
         if (!this.children.removeValue(child, true)) {
+            child.destroy();
             return false;
         } else {
             child.parent = null;
+            child.destroy();
             return true;
         }
     }
@@ -268,7 +271,6 @@ public class Node implements INode, IJson {
 
     @Override
     public <T extends INode> T apply() {
-        this.start();
         return (T) this;
     }
 
